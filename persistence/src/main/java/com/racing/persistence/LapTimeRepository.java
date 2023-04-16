@@ -1,6 +1,6 @@
 package com.racing.persistence;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface LapTimeRepository extends CrudRepository<LapTimeEntity, Long> {
+public interface LapTimeRepository extends JpaRepository<LapTimeEntity, Long> {
 }
