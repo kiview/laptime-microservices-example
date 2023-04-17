@@ -1,8 +1,6 @@
 package com.racing.fastestlap;
 
 import io.restassured.RestAssured;
-import io.restassured.response.Response;
-import org.assertj.core.api.Assertions;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,8 +13,9 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.utility.DockerImageName;
 
+import java.time.Duration;
+
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class FastestLapApplicationTests {
@@ -45,7 +44,7 @@ class FastestLapApplicationTests {
 	}
 
 	@Test
-	void timesArePersisted() {
+	void fastestTimeIsQueryable() {
 		kafkaTemplate.send("laptime", new LapTime("Lewis Hamilton", "Silverstone", 17));
 		kafkaTemplate.send("laptime", new LapTime("Lewis Hamilton", "Silverstone", 18));
 		kafkaTemplate.send("laptime", new LapTime("Lewis Hamilton", "Silverstone", 20));
@@ -53,6 +52,7 @@ class FastestLapApplicationTests {
 		kafkaTemplate.send("laptime", new LapTime("Lewis Hamilton", "Silverstone", 10));
 
 		Awaitility.await().untilAsserted(() -> RestAssured.given()
+				.contentType("application/json")
 				.get("/fastest-lap/Lewis_Hamilton/Silverstone")
 				.then().statusCode(200)
 				.body("time", equalTo(10)));

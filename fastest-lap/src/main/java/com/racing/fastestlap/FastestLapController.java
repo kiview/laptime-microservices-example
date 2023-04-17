@@ -5,11 +5,16 @@ import org.apache.kafka.streams.StoreQueryParameters;
 import org.apache.kafka.streams.state.QueryableStoreType;
 import org.apache.kafka.streams.state.QueryableStoreTypes;
 import org.apache.kafka.streams.state.ReadOnlyKeyValueStore;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.kafka.config.StreamsBuilderFactoryBean;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/fastest-lap")
@@ -29,8 +34,8 @@ public class FastestLapController {
                 kafkaStreams.store(StoreQueryParameters.fromNameAndType("fastest-lap-store", QueryableStoreTypes.keyValueStore()));
 
         var key = driver + "-" + track;
-
-        return valueStore.get(key);
+        return Optional.ofNullable(valueStore.get(key))
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
 }

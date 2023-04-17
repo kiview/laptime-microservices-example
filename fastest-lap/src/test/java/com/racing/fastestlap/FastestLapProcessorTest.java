@@ -5,6 +5,7 @@ import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.apache.kafka.streams.StreamsBuilder;
+import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.TopologyTestDriver;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,6 +35,9 @@ public class FastestLapProcessorTest {
         var props = new Properties();
         props.put(DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());
         props.put(DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());
+        props.put("statestore.cache.max.bytes", 1000);
+
+//        System.out.println(topology.describe());
 
         try (var testDriver = new TopologyTestDriver(topology, props)) {
             var inputTopic = testDriver.createInputTopic("laptime", new StringSerializer(), new JsonSerializer<LapTime>());
