@@ -9,11 +9,12 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.utility.DockerImageName;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import java.util.stream.Stream;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class PersistenceApplicationTests {
@@ -32,8 +33,7 @@ class PersistenceApplicationTests {
 
 	@DynamicPropertySource
 	static void kafkaProperties(DynamicPropertyRegistry registry) {
-		kafka.start();
-		postgres.start();
+		Stream.of(kafka, postgres).parallel().forEach(GenericContainer::start);
 		registry.add("spring.kafka.bootstrap-servers", () -> kafka.getBootstrapServers());
 		registry.add("spring.datasource.url", () -> postgres.getJdbcUrl());
 		registry.add("spring.datasource.username", () -> postgres.getUsername());
