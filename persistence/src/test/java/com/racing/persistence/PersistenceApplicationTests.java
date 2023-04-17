@@ -16,14 +16,11 @@ import org.testcontainers.utility.DockerImageName;
 
 import java.util.stream.Stream;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest()
 class PersistenceApplicationTests {
 
 	static KafkaContainer kafka = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:7.0.9"));
 	static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>(DockerImageName.parse("postgres:15.2"));
-
-	@LocalServerPort
-	private int port;
 
 	@Autowired
 	KafkaTemplate<String, LapTime> kafkaTemplate;

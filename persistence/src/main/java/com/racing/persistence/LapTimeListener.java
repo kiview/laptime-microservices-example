@@ -15,7 +15,7 @@ public class LapTimeListener {
     @KafkaListener(topics = "laptime", groupId = "persistence")
     public void listen(LapTime lapTime) {
         var entity = new LapTimeEntity(lapTime.driver(), lapTime.track(), lapTime.time());
-        lapTimeRepository.saveAndFlush(entity);
+        lapTimeRepository.save(entity);
     }
 
 }
